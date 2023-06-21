@@ -1,4 +1,5 @@
 "use client";
+import useTasks from "@/hooks/useTasks";
 import { Task } from "../interfaces/interfaces";
 import { useRouter } from "next/navigation";
 
@@ -7,17 +8,29 @@ interface Props {
 }
 
 const Task = ({ task }: Props) => {
+
+  const {tasks, setTasks}= useTasks()
+
   const router = useRouter();
 
-  const handleEdit = () => {
+   const handleEditTask = () => {
     router.push(`/edit/${task.id}`);
-  };
+  }; 
+
+  const handleDeleteTask = () => {
+    const taskCurrent= tasks.filter((e)=> (
+      e.id !== task.id
+    ))
+
+    setTasks(taskCurrent)
+  }
 
   return (
-    <div onClick={handleEdit} style={{ background: "#202020", color: "white" }}>
+    <div style={{ background: "#202020", color: "white" }}>
       <h2>{task.title}</h2>
       <p>{task.comments}</p>
-      <button>Delete</button>
+      <button onClick={handleEditTask}>Edit</button>
+      <button onClick={handleDeleteTask}>Delete</button>
     </div>
   );
 };
