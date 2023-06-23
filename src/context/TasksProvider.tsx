@@ -1,30 +1,14 @@
-"use client";
-import { useState } from "react";
+"use client"
 import { TasksContext } from "./TasksContext";
-import { Task } from "@/interfaces/interfaces";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 interface Props {
   children: JSX.Element | JSX.Element[];
 }
 
 export const TasksProvider = ({ children }: Props) => {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Limpiar",
-      comments: "Tengo que limpiar el escritorio",
-    },
-    {
-      id: "2",
-      title: "Comer",
-      comments: "Quiero comer algo rico",
-    },
-    {
-      id: "3",
-      title: "Viajar",
-      comments: "Tengo que cargar la Sube",
-    },
-  ]);
+  
+  const {tasks, setTasks} = useLocalStorage("tasks", []);
 
   return (
     <TasksContext.Provider value={{ tasks, setTasks }}>{children}</TasksContext.Provider>

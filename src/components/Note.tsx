@@ -1,8 +1,9 @@
 "use client"
-import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form"
 import { v4 as uuidv4 } from 'uuid';
 import useTasks from "@/hooks/useTasks";
+import { useLayoutEffect, useState } from "react";
 
 
 interface Props {
@@ -13,39 +14,50 @@ interface Props {
 
 
 const Note = ({ valueTitleInitial, valueCommentsInitial, idNote }: Props) => {
+
     const router = useRouter();
+
+    const { register, handleSubmit, formState: { errors } } = useForm()
 
     const { tasks, setTasks } = useTasks()
 
-    const [valueTitle, setValueTitle] = useState(valueTitleInitial);
+    const [placeholder, setPlaceholder] = useState({
+        title: "Write a title",
+        comments: "Write a description"
+    })
 
-    const [valueComments, setValueComments] = useState(valueCommentsInitial);
 
-    const handleChangeTitle = (e: any) => {
-        setValueTitle(e.target.value)
-    }
+    useLayoutEffect(() => {
+        setPlaceholder({
+            title: valueTitleInitial,
+            comments: valueCommentsInitial
+        })
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
 
-    const handleChangeComments = (e: any) => {
-        setValueComments(e.target.value)
-    }
+  
 
-    const handleSubmit = (e: any) => {
-        e.preventDefault()
+    const onSubmit = handleSubmit((data) => {
         if (valueTitleInitial === "" && valueCommentsInitial === "") {
+
+            const newNote = {
+                id: uuidv4(),
+                title: data.title,
+                comments: data.comments
+            }
+
             setTasks([
                 ...tasks,
-                {
-                    id: uuidv4(),
-                    title: valueTitle,
-                    comments: valueComments
-                }
+                newNote
             ])
+
+
         } else {
 
             const taskEdit = tasks.filter((task) => {
                 if (task.id === idNote) {
-                    task.title = valueTitle
-                    task.comments = valueComments
+                    task.title = data.title
+                    task.comments = data.comments
                 }
                 return task
             })
@@ -55,13 +67,15 @@ const Note = ({ valueTitleInitial, valueCommentsInitial, idNote }: Props) => {
             ])
         }
         router.push(`/`);
-    }
+    })
 
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input name='title' placeholder='Write a title' onChange={handleChangeTitle} value={valueTitle} />
-            <textarea name='description' placeholder='write a description' onChange={handleChangeComments} value={valueComments}></textarea>
+        <form onSubmit={onSubmit}>
+            <input placeholder={placeholder.title} {...register("title", { required: true })} />
+            {errors.title && <span>This field is required</span>}
+            <textarea placeholder={placeholder.comments} {...register("comments", { required: true })}></textarea>
+            {errors.comments && <span>This field is required</span>}
             <button>Save</button>
         </form>
     );

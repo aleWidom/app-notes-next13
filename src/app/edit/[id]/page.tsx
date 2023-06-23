@@ -8,8 +8,6 @@ const EditPage = ({ params }: any) => {
 
   const {tasks} = useTasks()
 
-  console.log(tasks)
-
  const noteSelected: any = tasks.find((e)=>(
    e.id === params.id
 ))

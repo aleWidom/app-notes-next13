@@ -1,9 +1,9 @@
 import { Task } from "@/interfaces/interfaces";
-import { createContext } from "react";
+import { SetStateAction, createContext } from "react";
 
 interface ContextProps {
   tasks: Task[];
-  setTasks: (description: Task[]) => void;
+  setTasks: (value: SetStateAction<Task[]>) => void;
 }
 
 export const TasksContext = createContext({} as ContextProps);
